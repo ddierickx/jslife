@@ -1,0 +1,1 @@
+An Javascript implementation of the Game of Life, powered by Raphael.
