@@ -199,11 +199,11 @@ if (this["Raphael"] == undefined) {
 			{
 				if (rect.taken == true) {
 					rect.attr("fill", configuration.foregroundColor);
-       					rect.attr("stroke", configuration.strokeColor);
+       				rect.attr("stroke", configuration.foregroundStrokeColor);
 				} else
 				{
 					rect.attr("fill", configuration.backgroundColor);
-   					rect.attr("stroke", configuration.backgroundColor);
+   					rect.attr("stroke", configuration.backgroundStrokeColor);
 				}	
 			});			
 		};

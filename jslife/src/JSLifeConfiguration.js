@@ -10,7 +10,8 @@ var JSLIFE = JSLIFE || {};
 		this.verticalBlocks = 40;
 		this.foregroundColor = "blue";
 		this.backgroundColor = "black";
-		this.strokeColor = "white";
+		this.foregroundStrokeColor = "white";
+		this.backgroundStrokeColor = "white";
 		this.updateSpeed = 50;
 		
 		/* ACCESSORS */
@@ -19,7 +20,8 @@ var JSLIFE = JSLIFE || {};
 		this.getVerticalBlocks = function() { return this.verticalBlocks; };
 		this.getForegroundColor = function() { return this.foregroundColor; };
 		this.getBackgroundColor = function() { return this.backgroundColor; };
-		this.getStrokeColor = function() { return this.strokeColor; };
+		this.getForegroundStrokeColor = function() { return this.foregroundStrokeColor; };
+		this.getBackgroundStrokeColor = function() { return this.backgroundStrokeColor; };
 		this.getUpdateSpeed = function() { return this.updateSpeed; };
 		
 		/* MUTATORS (Fluent Builder pattern) */
@@ -28,7 +30,8 @@ var JSLIFE = JSLIFE || {};
 		this.withVerticalBlocks = function(val) { this.verticalBlocks = val; return this; };
 		this.withForegroundColor = function(val) { this.foregroundColor = val; return this; };
 		this.withBackgroundColor = function(val) { this.backgroundColor = val; return this; };
-		this.withStrokeColor = function(val) { this.strokeColor = val; return this; };
+		this.withForegroundStrokeColor = function(val) { this.foregroundStrokeColor = val; return this; };
+		this.withBackgroundStrokeColor = function(val) { this.backgroundStrokeColor = val; return this; };
 		this.withUpdateSpeed = function(val) { this.updateSpeed = val; return this; };
 	};
 })();
