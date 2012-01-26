@@ -11,8 +11,6 @@ if (this["Raphael"] == undefined) {
 	var defaultConfig = new JSLIFE.configuration.Configuration();
 	
 	JSLIFE.core.JSLife = function(config) {
-		this.pause = false;
-		
 		this.init = function(configuration) {
 			var paper = this.makeRaphaelPaper(configuration);
 			var state = this.makeEmptyState(paper, configuration);
@@ -28,10 +26,11 @@ if (this["Raphael"] == undefined) {
 		
 		this.makeEmptyState = function(paper, configuration) {
 			// Add dummy lines...
-			var state = [],
+			var state = {},
 				max_x = configuration.horizontalBlocks + 2, x,
 				max_y = configuration.verticalBlocks + 2, y;
 			var side = paper.canvas.clientWidth / configuration.verticalBlocks;
+			var jsLife = this;			
 
 			state.each = function(fx, includeDummy) {
 				var inc = (!includeDummy) ? 1 : 0;
@@ -40,14 +39,14 @@ if (this["Raphael"] == undefined) {
 				{
 					for (x=inc; x < max_x - inc; x++)
 					{
-						var rect = state[y][x];
+						var rect = state[jsLife.makeKey(x, y)];
 						fx(rect, x, y);
 					}
 				}				
 			};
 
 			state.resetChangelings = function() {
-				this.changelings = {};	
+				this.changelings = {};
 			};
 
 			state.eachChangeling = function(fx) {
@@ -91,8 +90,6 @@ if (this["Raphael"] == undefined) {
 			// Initialize values
 			for (y=0; y < max_y; y++)
 			{
-				state[y] = [];
-				
 				for (x=0; x < max_x; x++)
 				{
 					var rect;
@@ -104,14 +101,22 @@ if (this["Raphael"] == undefined) {
 						rect = this.makeDummyRect(x, y);
 					}
 					
-					state[y][x] = rect;
+					state[rect.key] = rect;
 				}
 			}
 
 			state.each(function(rect, x, y)
 			{
-				rect.neighbours = [state[y - 1][x], state[y + 1][x], state[y][x - 1], state[y][x + 1],
-							state[y - 1][x - 1], state[y - 1][x + 1], state[y + 1][x -1], state[y + 1][x + 1]];
+				rect.neighbours = [
+							state[jsLife.makeKey(x, y - 1)],
+							state[jsLife.makeKey(x, y + 1)],
+							state[jsLife.makeKey(x - 1, y)],
+							state[jsLife.makeKey(x + 1, y)],
+							state[jsLife.makeKey(x - 1, y - 1)],
+							state[jsLife.makeKey(x + 1, y - 1)],
+							state[jsLife.makeKey(x -1, y + 1)],
+							state[jsLife.makeKey(x + 1, y + 1)]
+						];
 
 				rect.takenNeighbours = function() {
 					return this.neighbours.filter(function(rect) { return rect.taken; });
@@ -120,6 +125,11 @@ if (this["Raphael"] == undefined) {
 
 			return state;			
 		};
+		
+		this.makeKey = function(x, y)
+		{
+			return x + "_" + y;
+		}
 
 		this.randomize = function(state)
 		{
@@ -134,7 +144,7 @@ if (this["Raphael"] == undefined) {
 		this.makeRealRect = function(paper, x, y, side)
 		{
 			var rect = paper.rect((x-1) * side, (y-1) * side, side, side);
-			rect.key = x + "_" + y;
+			rect.key = this.makeKey(x, y);
 			return rect;
 		};
 
@@ -142,7 +152,7 @@ if (this["Raphael"] == undefined) {
 		this.makeDummyRect = function(x, y)
 		{
 			var rect = { taken: false };
-			rect.key = x + "_" + y;
+			rect.key = this.makeKey(x, y);
 			rect.attr = function(p, v) {};
 			rect.dummy = true;
 			return rect;
@@ -157,10 +167,7 @@ if (this["Raphael"] == undefined) {
 		};
 		
 		this.evolve = function(state, configuration) {
-			var live = [];
-			var dead = [];
-			
-			var cc = 0;
+			var changes = [];
 
 			state.eachChangeling(function(rect)
 			{
@@ -168,35 +175,23 @@ if (this["Raphael"] == undefined) {
 				var n = takenNeighbours.length;				
 
 				if ( (n < 2) && (rect.taken) )
-					dead.push(rect);
+					changes.push({ alive: false, rect: rect});
 				else if ( (n > 3) && (rect.taken) )
-					dead.push(rect);
+					changes.push({ alive: false, rect: rect});
 				else if ( (n === 2 || n === 3) && (rect.taken) )
-					live.push(rect);
+					changes.push({ alive: true, rect: rect});
 				else if ( (!rect.taken) && (n === 3) )
-					live.push(rect);
-				
-				cc += 1;
+					changes.push({ alive: true, rect: rect});
 			});		
-			
-			console.log(cc);
 
 			state.resetChangelings();
 
-			var l = live.length;
-			var d = dead.length;
-			var i = 0;			
+			var i = changes.length - 1;
 
-			for (i=0; i < l; i++)
-			{
-				state.live(live[i]);
-			}
-
-			for (i=0; i < d; i++)
-			{
-				state.die(dead[i]);
-			}
-
+			do { 
+				var change = changes[i];
+				state.setTaken(change.rect, change.alive);			
+			} while (i--);		
 		};
 		
 		this.render = function(paper, state, configuration) {

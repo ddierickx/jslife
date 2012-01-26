@@ -7,7 +7,7 @@ var JSLIFE = JSLIFE || {};
 		/* FIELDS */
 		this.targetDivId = "canvas";
 		this.horizontalBlocks = 50;
-		this.verticalBlocks = 50;
+		this.verticalBlocks = 40;
 		this.foregroundColor = "blue";
 		this.backgroundColor = "black";
 		this.strokeColor = "white";
