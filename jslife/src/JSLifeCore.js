@@ -5,6 +5,32 @@ if (this["Raphael"] == undefined) {
 	alert("Oops, the Raphaeljs framework was not found...");
 }
 
+/**
+ * Copyright (c) Mozilla Foundation http://www.mozilla.org/
+ * This code is available under the terms of the MIT License
+ */
+if (!Array.prototype.filter) {
+    Array.prototype.filter = function(fun /*, thisp*/) {
+        var len = this.length >>> 0;
+        if (typeof fun != "function") {
+            throw new TypeError();
+        }
+
+        var res = [];
+        var thisp = arguments[1];
+        for (var i = 0; i < len; i++) {
+            if (i in this) {
+                var val = this[i]; // in case fun mutates this
+                if (fun.call(thisp, val, i, this)) {
+                    res.push(val);
+                }
+            }
+        }
+
+        return res;
+    };
+}
+
 (function() {
 	JSLIFE.core = {};
 	
@@ -191,10 +217,12 @@ if (this["Raphael"] == undefined) {
 
 			var i = changes.length - 1;
 
-			do { 
+			while (i >= 0)
+			{
 				var change = changes[i];
 				state.setTaken(change.rect, change.alive);			
-			} while (i--);		
+				i -= 1;
+			}		
 		};
 		
 		this.render = function(paper, state, configuration) {
