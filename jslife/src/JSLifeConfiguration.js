@@ -6,12 +6,12 @@ var JSLIFE = JSLIFE || {};
 	JSLIFE.configuration.Configuration = function()	{
 		/* FIELDS */
 		this.targetDivId = "canvas";
-		this.horizontalBlocks = 70;
-		this.verticalBlocks = 100;
+		this.horizontalBlocks = 50;
+		this.verticalBlocks = 50;
 		this.foregroundColor = "blue";
 		this.backgroundColor = "black";
 		this.strokeColor = "white";
-		this.updateSpeed = 100;
+		this.updateSpeed = 50;
 		
 		/* ACCESSORS */
 		this.getTargetDivId = function() { return this.targetDivId; };
