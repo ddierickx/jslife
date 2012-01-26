@@ -6,7 +6,16 @@
 <div id="canvas" style="width: 600px; height: 400px;">
 </div>
 <script type="text/javascript">
-	var gol = new JSLIFE.core.JSLife();
+		var conf = new JSLIFE.configuration.Configuration()
+						.withTargetDivId("canvas")
+						.withHorizontalBlocks(25)
+						.withUpdateSpeed(10)			
+						.withBackgroundStrokeColor("#CCFFFF")
+						.withForegroundStrokeColor("#CCFFFF")
+						.withForegroundColor("#47FF19")
+						.withBackgroundColor("#19BAFF");
+						
+	var gol = new JSLIFE.core.JSLife(conf);
 </script>
 </body>
 </html>

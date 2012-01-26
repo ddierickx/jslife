@@ -27,9 +27,12 @@ if (this["Raphael"] == undefined) {
 		this.makeEmptyState = function(paper, configuration) {
 			// Add dummy lines...
 			var state = {},
-				max_x = configuration.horizontalBlocks + 2, x,
-				max_y = configuration.verticalBlocks + 2, y;
-			var side = paper.canvas.clientWidth / configuration.verticalBlocks;
+				max_x = configuration.horizontalBlocks + 2,
+				x,
+				side = paper.canvas.clientWidth / configuration.horizontalBlocks,
+				max_y =  Math.floor(paper.canvas.clientHeight / side) + 2,
+				y;
+
 			var jsLife = this;			
 
 			state.each = function(fx, includeDummy) {
