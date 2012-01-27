@@ -55,8 +55,8 @@ if (!Array.prototype.filter) {
 			var state = {},
 				max_x = configuration.horizontalBlocks + 2,
 				x,
-				side = paper.canvas.clientWidth / configuration.horizontalBlocks,
-				max_y =  Math.floor(paper.canvas.clientHeight / side) + 2,
+				side = configuration.width / configuration.horizontalBlocks,
+				max_y =  Math.floor(configuration.height / side) + 2,
 				y;
 
 			var jsLife = this;			

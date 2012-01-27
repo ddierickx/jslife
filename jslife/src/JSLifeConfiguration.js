@@ -7,6 +7,8 @@ var JSLIFE = JSLIFE || {};
 		/* FIELDS */
 		this.targetDivId = "canvas";
 		this.horizontalBlocks = 50;
+		this.width = 150;
+		this.height = 150;
 		this.foregroundColor = "blue";
 		this.backgroundColor = "black";
 		this.foregroundStrokeColor = "white";
@@ -21,6 +23,8 @@ var JSLIFE = JSLIFE || {};
 		this.getForegroundStrokeColor = function() { return this.foregroundStrokeColor; };
 		this.getBackgroundStrokeColor = function() { return this.backgroundStrokeColor; };
 		this.getUpdateSpeed = function() { return this.updateSpeed; };
+		this.getWidth = function() { return this.width; };
+		this.getHeight = function() { return this.height; };
 		
 		/* MUTATORS (Fluent Builder pattern) */
 		this.withTargetDivId = function(val) { this.targetDivId = val; return this; };
@@ -30,5 +34,7 @@ var JSLIFE = JSLIFE || {};
 		this.withForegroundStrokeColor = function(val) { this.foregroundStrokeColor = val; return this; };
 		this.withBackgroundStrokeColor = function(val) { this.backgroundStrokeColor = val; return this; };
 		this.withUpdateSpeed = function(val) { this.updateSpeed = val; return this; };
+		this.withWidth = function(val) { this.width = val; return this; };
+		this.withHeight = function(val) { this.height = val; return this; };
 	};
 })();
