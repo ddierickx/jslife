@@ -7,32 +7,6 @@
 <canvas id="canvas" width="600" height="400">
 </canvas>      
 <script type="text/javascript">
-
-var canvas = document.getElementById("canvas");
-var context = canvas.getContext("2d");
-var width = canvas.clientWidth;
-var height = canvas.clientHeight;
-var row = 0;
-var col = 0;
-var horizontalBlocks = 10;
-var side = width / horizontalBlocks;
-var verticalBlocks = Math.floor(height / side);
-
-for (row = 0; row < verticalBlocks; row++)
-{
-	for (col = 0; col < horizontalBlocks; col++)
-	{
-		context.beginPath();
-		context.rect(col * side, row * side, (col + 1) * side, (row + 1) * side);
-		context.fillStyle = "#8ED6FF";
-		context.fill();
-		context.lineWidth = 1;
-		context.strokeStyle = "black";
-		context.stroke();
-	}
-}
-
-/*
 		var conf = new JSLIFE.configuration.Configuration()
 						.withTargetDivId("canvas")
 						.withWidth(600)
@@ -45,7 +19,7 @@ for (row = 0; row < verticalBlocks; row++)
 						.withBackgroundColor("#19BAFF");
 						
 	var gol = new JSLIFE.core.JSLife(conf);
-*/
+
 </script>
 </body>
 </html>

@@ -33,46 +33,19 @@ if (!Array.prototype.filter) {
 	
 	JSLIFE.core.JSLife = function(config) {
 		this.init = function(configuration) {
-			var paper = this.makeGameTable(configuration);
-			var state = this.makeEmptyState(paper, configuration);
+			var context = this.makeCanvasContext(configuration);
+			var state = this.makeEmptyState(context, configuration);
 			this.randomize(state);			
 
 			// Set if off...
-			this.loop(paper, state, configuration);
+			this.loop(context, state, configuration);
 		};
 		
-		this.makeRaphaelPaper = function(configuration) {
-			var canvas = document.getElementById(configuration.targetDivId);
-			var width = canvas.clientWidth;
-			var height = canvas.clientHeight;
-			var row = 0;
-			var col = 0;
-			var horizontalBlocks = 10;
-			var side = width / horizontalBlocks;
-			var verticalBlocks = Math.floor(height / side);
-			
-			var tableHtml = "<table>";
-			
-			for (row = 0; row < verticalBlocks; row++)
-			{
-				var rowHtml = "<tr>";
-				
-				for (col = 0; col < horizontalBlocks; col++)
-				{
-					var cellHtml = "<td>" + row + ", " + col + "</td>";
-					rowHtml += cellHtml;
-				}
-				
-				rowHtml += "</tr>";
-				tableHtml += rowHtml;
-			}
-			
-			tableHtml += "</table>";
-			
-			canvas.innerHTML = tableHtml;
+		this.makeCanvasContext = function(configuration) {
+			return document.getElementById("canvas").getContext("2d");
 		};
 		
-		this.makeEmptyState = function(paper, configuration) {
+		this.makeEmptyState = function(context, configuration) {
 			// Add dummy lines...
 			var state = {},
 				max_x = configuration.horizontalBlocks + 2,
@@ -143,15 +116,8 @@ if (!Array.prototype.filter) {
 			{
 				for (x=0; x < max_x; x++)
 				{
-					var rect;
-					
-					if ( ( (x > 0) && (x < max_x - 1) ) && ( (y > 0) && (y < max_y - 1) ) )
-					{
-						rect = this.makeRealRect(paper, x, y, side);
-					} else {
-						rect = this.makeDummyRect(x, y);
-					}
-					
+					var dummy = ( ( (x > 0) && (x < max_x - 1) ) && ( (y > 0) && (y < max_y - 1) ) );
+					var rect = this.makeRect(context, x, y, side, dummy);
 					state[rect.key] = rect;
 				}
 			}
@@ -191,30 +157,24 @@ if (!Array.prototype.filter) {
 				state.setTaken(rect, take);
 			});
 		};
-		
-		this.makeRealRect = function(paper, x, y, side)
+ 		
+		this.makeRect = function(context, x, y, side, dummy)
 		{
-			var rect = paper.rect((x-1) * side, (y-1) * side, side, side);
-			rect.key = this.makeKey(x, y);
-			return rect;
-		};
+			return {
+				taken: false,
+				x: x,
+				y: y,
+				side: side,
+				dummy: dummy
+			};
+		}
 
-		// Used for bounds so we don't have to check array dimensions all the time.
-		this.makeDummyRect = function(x, y)
-		{
-			var rect = { taken: false };
-			rect.key = this.makeKey(x, y);
-			rect.attr = function(p, v) {};
-			rect.dummy = true;
-			return rect;
-		};
-
-		this.loop = function(paper, state, configuration) {
+		this.loop = function(context, state, configuration) {
 			this.evolve(state, configuration);
-			this.render(paper, state, configuration);
+			this.render(context, state, configuration);
 			
 			var thiz = this;
-			setTimeout(function() { thiz.loop(paper, state, configuration); }, configuration.updateSpeed);
+			setTimeout(function() { thiz.loop(context, state, configuration); }, configuration.updateSpeed);
 		};
 		
 		this.evolve = function(state, configuration) {
@@ -247,17 +207,28 @@ if (!Array.prototype.filter) {
 			}		
 		};
 		
-		this.render = function(paper, state, configuration) {
+		this.render = function(context, state, configuration) {
 			state.each(function(rect)
 			{
+				var color, stroke;
+				var side = rect.side;
+
 				if (rect.taken == true) {
-					rect.attr("fill", configuration.foregroundColor);
-       				rect.attr("stroke", configuration.foregroundStrokeColor);
+					color =  configuration.foregroundColor;
+       					stroke = configuration.foregroundStrokeColor;
 				} else
 				{
-					rect.attr("fill", configuration.backgroundColor);
-   					rect.attr("stroke", configuration.backgroundStrokeColor);
-				}	
+					color = configuration.backgroundColor;
+   					stroke = configuration.backgroundStrokeColor;
+				}
+
+				context.beginPath();
+				context.rect(rect.x, rect.y, side, side);
+				context.fillStyle = color;
+				context.fill();
+				context.lineWidth = configuration.strokeWidth;
+				context.strokeStyle = stroke;
+				context.stroke();
 			});			
 		};
 		

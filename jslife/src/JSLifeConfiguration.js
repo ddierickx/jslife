@@ -13,18 +13,8 @@ var JSLIFE = JSLIFE || {};
 		this.backgroundColor = "black";
 		this.foregroundStrokeColor = "white";
 		this.backgroundStrokeColor = "white";
+		this.strokeWidth = 1;
 		this.updateSpeed = 50;
-		
-		/* ACCESSORS */
-		this.getTargetDivId = function() { return this.targetDivId; };
-		this.getHorizontalBlocks = function() { return this.horizontalBlocks; };
-		this.getForegroundColor = function() { return this.foregroundColor; };
-		this.getBackgroundColor = function() { return this.backgroundColor; };
-		this.getForegroundStrokeColor = function() { return this.foregroundStrokeColor; };
-		this.getBackgroundStrokeColor = function() { return this.backgroundStrokeColor; };
-		this.getUpdateSpeed = function() { return this.updateSpeed; };
-		this.getWidth = function() { return this.width; };
-		this.getHeight = function() { return this.height; };
 		
 		/* MUTATORS (Fluent Builder pattern) */
 		this.withTargetDivId = function(val) { this.targetDivId = val; return this; };
@@ -36,5 +26,6 @@ var JSLIFE = JSLIFE || {};
 		this.withUpdateSpeed = function(val) { this.updateSpeed = val; return this; };
 		this.withWidth = function(val) { this.width = val; return this; };
 		this.withHeight = function(val) { this.height = val; return this; };
+		this.withStrokeWidth = function(val) { this.strokeWidth = val; return this; };
 	};
 })();
