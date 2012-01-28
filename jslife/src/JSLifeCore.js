@@ -1,10 +1,5 @@
 var JSLIFE = JSLIFE || {};
 
-if (this["Raphael"] == undefined) {
-	// Raphael not found!
-	alert("Oops, the Raphaeljs framework was not found...");
-}
-
 /**
  * Copyright (c) Mozilla Foundation http://www.mozilla.org/
  * This code is available under the terms of the MIT License
@@ -38,7 +33,7 @@ if (!Array.prototype.filter) {
 	
 	JSLIFE.core.JSLife = function(config) {
 		this.init = function(configuration) {
-			var paper = this.makeRaphaelPaper(configuration);
+			var paper = this.makeGameTable(configuration);
 			var state = this.makeEmptyState(paper, configuration);
 			this.randomize(state);			
 
@@ -47,7 +42,34 @@ if (!Array.prototype.filter) {
 		};
 		
 		this.makeRaphaelPaper = function(configuration) {
-			return Raphael(configuration.targetDivId, "100%", "100%");
+			var canvas = document.getElementById(configuration.targetDivId);
+			var width = canvas.clientWidth;
+			var height = canvas.clientHeight;
+			var row = 0;
+			var col = 0;
+			var horizontalBlocks = 10;
+			var side = width / horizontalBlocks;
+			var verticalBlocks = Math.floor(height / side);
+			
+			var tableHtml = "<table>";
+			
+			for (row = 0; row < verticalBlocks; row++)
+			{
+				var rowHtml = "<tr>";
+				
+				for (col = 0; col < horizontalBlocks; col++)
+				{
+					var cellHtml = "<td>" + row + ", " + col + "</td>";
+					rowHtml += cellHtml;
+				}
+				
+				rowHtml += "</tr>";
+				tableHtml += rowHtml;
+			}
+			
+			tableHtml += "</table>";
+			
+			canvas.innerHTML = tableHtml;
 		};
 		
 		this.makeEmptyState = function(paper, configuration) {
