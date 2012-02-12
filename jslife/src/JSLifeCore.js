@@ -62,15 +62,31 @@ if (!Array.prototype.filter) {
 		this.enableInteraction = function(context, state)
 		{
 			var thisHelper = this;
-			var mouseFx = function(x, y)
+			var mouseFx = function(e)
 			{
+				/*
+					As described here: http://answers.oreilly.com/topic/1929-how-to-use-the-canvas-and-draw-elements-in-html5/
+				*/
+				var x;
+				var y;
+				if (e.pageX || e.pageY) { 
+				  x = e.pageX;
+				  y = e.pageY;
+				}
+				else { 
+				  x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
+				  y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
+				} 
+				x -= context.canvas.offsetLeft;
+				y -= context.canvas.offsetTop;
+
 				var first = thisHelper.makeKey(0, 0);
 				var cellX = Math.floor(x / state[first].side);
 				var cellY = Math.floor(y / state[first].side);
 				state.live(state[thisHelper.makeKey(cellX, cellY)]);
 			}
 			
-			 context.canvas.addEventListener('mousemove', function(event) { mouseFx(event.x, event.y); }, false);
+			 context.canvas.addEventListener('mousemove', function(event) { mouseFx(event); }, false);
 		};
 		
 		this.makeCanvasContext = function(configuration) {
