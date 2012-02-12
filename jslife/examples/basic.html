@@ -1,25 +1,29 @@
+<!DOCTYPE html>
 <html>
 <head>
+<!--
 <script type="text/javascript" src="../src/JSLifeConfiguration.js"></script>
 <script type="text/javascript" src="../src/JSLifeCore.js"></script>
+-->
+<script type="text/javascript" src="../jslife-min.js"></script>
 </head>
 <body>
-<canvas id="canvas" width="600" height="400">
-</canvas>      
+<canvas id="canvas1" width="800" height="600">
+</canvas>
 <script type="text/javascript">
-		var conf = new JSLIFE.configuration.Configuration()
-						.withTargetDivId("canvas")
-						.withWidth(600)
-						.withHeight(400)
-						.withHorizontalBlocks(25)
-						.withUpdateSpeed(10)			
+	var gosperGliderGun = [ "2_5", "3_5", "2_6", "3_6", "12_5", "12_6", "12_7", "13_4", "13_8", "14_3", "14_9", "15_3", "15_9",
+					"16_6", "17_4", "17_8", "18_7", "18_5", "18_6", "19_6", "22_5", "23_5", "22_4", "23_4", "22_3", "23_3", "24_2", "24_6", "26_1", "26_2", "26_6", "26_7", "36_3", "37_3", "36_4", "37_4"];
+
+	var conf = new JSLIFE.configuration.Configuration()
+						.withHorizontalBlocks(50)
+						.withUpdateSpeed(40)	
 						.withBackgroundStrokeColor("#CCFFFF")
 						.withForegroundStrokeColor("#CCFFFF")
 						.withForegroundColor("#47FF19")
-						.withBackgroundColor("#19BAFF");
-						
-	var gol = new JSLIFE.core.JSLife(conf);
-
+						.withBackgroundColor("#19BAFF")
+						.withInitialState(gosperGliderGun);
+		
+ 	new JSLIFE.core.JSLife(conf.withTargetDivId("canvas1"));
 </script>
 </body>
 </html>

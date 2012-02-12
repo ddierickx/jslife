@@ -35,25 +35,63 @@ if (!Array.prototype.filter) {
 		this.init = function(configuration) {
 			var context = this.makeCanvasContext(configuration);
 			var state = this.makeEmptyState(context, configuration);
-			this.randomize(state);			
+			this.enableInteraction(context, state);
+		
+			if (configuration.initialState == undefined)
+			{
+				this.randomize(state);
+			} else
+			{
+				this.applyState(configuration.initialState, state);
+			}
 
 			// Set if off...
 			this.loop(context, state, configuration);
 		};
 		
+		this.applyState = function(storedState, state)
+		{
+			var thisHelper = this;
+			state.each(function(rect)
+			{			
+				var take = (storedState.indexOf(thisHelper.makeKey(rect.x - 1, rect.y - 1)) == -1) ? false : true;
+				state.setTaken(rect, take);
+			});
+		}
+		
+		this.enableInteraction = function(context, state)
+		{
+			var thisHelper = this;
+			var mouseFx = function(x, y)
+			{
+				var first = thisHelper.makeKey(0, 0);
+				var cellX = Math.floor(x / state[first].side);
+				var cellY = Math.floor(y / state[first].side);
+				state.live(state[thisHelper.makeKey(cellX, cellY)]);
+			}
+			
+			 context.canvas.addEventListener('mousemove', function(event) { mouseFx(event.x, event.y); }, false);
+		};
+		
 		this.makeCanvasContext = function(configuration) {
-			return document.getElementById("canvas").getContext("2d");
+			var el = document.getElementById(configuration.targetDivId);		
+			return el.getContext("2d");
 		};
 		
 		this.makeEmptyState = function(context, configuration) {
+			var width = context.canvas.clientWidth;
+			var height = context.canvas.clientHeight;
+			
 			// Add dummy lines...
 			var state = {},
 				max_x = configuration.horizontalBlocks + 2,
 				x,
-				side = configuration.width / configuration.horizontalBlocks,
-				max_y =  Math.floor(configuration.height / side) + 2,
+				side = Math.floor((width - (max_x * configuration.strokeWidth)) / (max_x - 2)),
+				max_y =  Math.floor((height / side) + 2),
 				y;
-
+			
+			
+			
 			var jsLife = this;			
 
 			state.each = function(fx, includeDummy) {
@@ -116,7 +154,7 @@ if (!Array.prototype.filter) {
 			{
 				for (x=0; x < max_x; x++)
 				{
-					var dummy = ( ( (x > 0) && (x < max_x - 1) ) && ( (y > 0) && (y < max_y - 1) ) );
+					var dummy = !( (x > 0) && (x < max_x - 1) && (y > 0) && (y < max_y - 1) );
 					var rect = this.makeRect(context, x, y, side, dummy);
 					state[rect.key] = rect;
 				}
@@ -124,20 +162,14 @@ if (!Array.prototype.filter) {
 
 			state.each(function(rect, x, y)
 			{
-				rect.neighbours = [
-							state[jsLife.makeKey(x, y - 1)],
-							state[jsLife.makeKey(x, y + 1)],
-							state[jsLife.makeKey(x - 1, y)],
-							state[jsLife.makeKey(x + 1, y)],
-							state[jsLife.makeKey(x - 1, y - 1)],
-							state[jsLife.makeKey(x + 1, y - 1)],
-							state[jsLife.makeKey(x -1, y + 1)],
-							state[jsLife.makeKey(x + 1, y + 1)]
-						];
-
-				rect.takenNeighbours = function() {
-					return this.neighbours.filter(function(rect) { return rect.taken; });
-				};			
+				rect.neighbours.push(state[jsLife.makeKey(x - 1, y)]);
+				rect.neighbours.push(state[jsLife.makeKey(x + 1, y)]);
+				rect.neighbours.push(state[jsLife.makeKey(x, y + 1)]);
+				rect.neighbours.push(state[jsLife.makeKey(x, y - 1)]);
+				rect.neighbours.push(state[jsLife.makeKey(x - 1, y - 1)]);
+				rect.neighbours.push(state[jsLife.makeKey(x - 1, y + 1)]);
+				rect.neighbours.push(state[jsLife.makeKey(x + 1, y - 1)]);
+				rect.neighbours.push(state[jsLife.makeKey(x + 1, y + 1)]);
 			});
 
 			return state;			
@@ -164,14 +196,20 @@ if (!Array.prototype.filter) {
 				taken: false,
 				x: x,
 				y: y,
+				key: this.makeKey(x, y),
 				side: side,
-				dummy: dummy
+				dummy: dummy,
+				neighbours : [],
+				takenNeighbours : function() {
+						return this.neighbours.filter(function(rect) { return rect.taken; });
+				}
 			};
 		}
 
 		this.loop = function(context, state, configuration) {
-			this.evolve(state, configuration);
 			this.render(context, state, configuration);
+			this.evolve(state, configuration);
+
 			
 			var thiz = this;
 			setTimeout(function() { thiz.loop(context, state, configuration); }, configuration.updateSpeed);
@@ -184,7 +222,7 @@ if (!Array.prototype.filter) {
 			{
 				var takenNeighbours = rect.takenNeighbours();
 				var n = takenNeighbours.length;				
-
+				
 				if ( (n < 2) && (rect.taken) )
 					changes.push({ alive: false, rect: rect});
 				else if ( (n > 3) && (rect.taken) )
@@ -210,25 +248,32 @@ if (!Array.prototype.filter) {
 		this.render = function(context, state, configuration) {
 			state.each(function(rect)
 			{
-				var color, stroke;
-				var side = rect.side;
+				var color, stroke, side = rect.side;
+
+				var x = rect.x - 1, y = rect.y - 1;
 
 				if (rect.taken == true) {
-					color =  configuration.foregroundColor;
-       					stroke = configuration.foregroundStrokeColor;
+					if (typeof(configuration.foregroundColor) == "function")
+					{
+						color = configuration.foregroundColor(x, y);
+					} else
+					{
+						color =  configuration.foregroundColor;
+					}
+					
+					stroke = configuration.foregroundStrokeColor;
 				} else
 				{
 					color = configuration.backgroundColor;
    					stroke = configuration.backgroundStrokeColor;
 				}
 
-				context.beginPath();
-				context.rect(rect.x, rect.y, side, side);
-				context.fillStyle = color;
-				context.fill();
-				context.lineWidth = configuration.strokeWidth;
+				context.fillStyle   = color;
 				context.strokeStyle = stroke;
-				context.stroke();
+				context.lineWidth   = configuration.strokeWidth;
+
+				context.fillRect(x * side, y * side, side, side);
+				context.strokeRect(x * side, y * side, side, side);
 			});			
 		};
 		
