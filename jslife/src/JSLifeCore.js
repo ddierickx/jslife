@@ -69,7 +69,6 @@ if (!Array.prototype.filter) {
 				var el = $(context.canvas);
 				var cellX = Math.floor((e.pageX - el.offset().left) / state[first].side);
 				var cellY = Math.floor((e.pageY - el.offset().top) / state[first].side);
-				console.log(cellX + ", " + cellY);
 				//var cellX = Math.floor((e.offsetX) / state[first].side);
 				//var cellY = Math.floor((e.offsetY) / state[first].side);
 				state.live(state[thisHelper.makeKey(cellX, cellY)]);
