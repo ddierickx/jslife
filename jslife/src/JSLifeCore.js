@@ -78,7 +78,8 @@ if (!Array.prototype.filter) {
 				  y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
 				}
 
-				//x -= context.canvas.offsetLeft;
+				x -= context.canvas.offsetLeft;
+				console.log(context.canvas.offsetTop);
 				y -= context.canvas.offsetTop;
 
 				var first = thisHelper.makeKey(0, 0);
