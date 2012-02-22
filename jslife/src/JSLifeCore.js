@@ -65,8 +65,8 @@ if (!Array.prototype.filter) {
 			var mouseFx = function(e)
 			{
 				var first = thisHelper.makeKey(0, 0);
-				var cellX = Math.floor((e.clientX) / state[first].side);
-				var cellY = Math.floor((e.clientY) / state[first].side);
+				var cellX = Math.floor((e.offsetX) / state[first].side);
+				var cellY = Math.floor((e.offsetY) / state[first].side);
 				state.live(state[thisHelper.makeKey(cellX, cellY)]);
 			}
 			
