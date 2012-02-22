@@ -76,8 +76,9 @@ if (!Array.prototype.filter) {
 				else { 
 				  x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft; 
 				  y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop; 
-				} 
-				x -= context.canvas.offsetLeft;
+				}
+
+				//x -= context.canvas.offsetLeft;
 				y -= context.canvas.offsetTop;
 
 				var first = thisHelper.makeKey(0, 0);
