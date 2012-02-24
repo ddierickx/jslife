@@ -250,7 +250,7 @@ if (!Array.prototype.filter) {
 		};
 		
 		this.render = function(context, state, configuration) {
-			state.each(function(rect)
+			state.eachChangeling(function(rect)
 			{
 				var color, stroke, side = rect.side;
 
